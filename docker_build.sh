@@ -7,6 +7,20 @@ UBUNTU_VERSION=`echo $1 | awk -F '-cu' '{print $1}'`
 CUDA_VERSION=`echo $1 | awk -F '-cu' '{print $2}'`
 echo "ubuntu version:${UBUNTU_VERSION},cuda version:${CUDA_VERSION}"
 
+docker run -d --restart=on-failure \
+    --name my_workspace \
+    --gpus all  \
+    --shm-size=1024m \
+    -e USER=ubuntu \
+    -e PASSWORD=ubuntu \
+    -e GID=$(id -g) \
+    -e UID=$(id -u) \
+    -e REMOTE_DESKTOP=kasmvnc \
+    -p 10022:22 \
+    -p 14000:4000 \
+    -p 15000:5000 \
+    gezp/ubuntu-desktop:20.04-cu11.0.3
+
 # check ubuntu version
 if [[(${UBUNTU_VERSION} != "18.04") && (${UBUNTU_VERSION} != "20.04") && (${UBUNTU_VERSION} != "22.04") && (${UBUNTU_VERSION} != "24.04")]];then
     echo "Invalid ubuntu version:${UBUNTU_VERSION}"
